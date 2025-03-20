@@ -2,20 +2,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CurrencyConverterPagee extends StatefulWidget {
-  CurrencyConverterPagee({super.key}) {
-    print("constructor");
-  }
+  const CurrencyConverterPagee({super.key});
   @override
-  State<CurrencyConverterPagee> createState() {
-    return _CurrencyCoverterStatePageState();
-  }
+  State<CurrencyConverterPagee> createState() =>
+      _CurrencyCoverterStatePageState();
 }
 
 class _CurrencyCoverterStatePageState extends State<CurrencyConverterPagee> {
   final TextEditingController textEditingController = TextEditingController();
   void convert() {
     setState(() {
-      result = double.parse(textEditingController.text) * 81;
+      result =
+          (double.parse(textEditingController.text) * 1535.17).roundToDouble();
     });
   }
 
@@ -47,7 +45,7 @@ class _CurrencyCoverterStatePageState extends State<CurrencyConverterPagee> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              result.toString(),
+              "NGN ${result.toString()}",
               style: const TextStyle(
                 fontSize: 45,
                 fontWeight: FontWeight.bold,
