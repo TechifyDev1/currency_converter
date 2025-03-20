@@ -13,6 +13,12 @@ class CurrencyConverterPagee extends StatefulWidget {
 
 class _CurrencyCoverterStatePageState extends State<CurrencyConverterPagee> {
   final TextEditingController textEditingController = TextEditingController();
+  void convert() {
+    setState(() {
+      result = double.parse(textEditingController.text) * 81;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -77,10 +83,7 @@ class _CurrencyCoverterStatePageState extends State<CurrencyConverterPagee> {
               ),
             ),
             TextButton(
-              onPressed: () {
-                result = double.parse(textEditingController.text) * 81;
-                build(context);
-              },
+              onPressed: convert,
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blue,
