@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart';
 
 class CurrencyConverterPagee extends StatefulWidget {
   const CurrencyConverterPagee({super.key});
@@ -10,22 +14,59 @@ class CurrencyConverterPagee extends StatefulWidget {
 
 class _CurrencyCoverterStatePageState extends State<CurrencyConverterPagee> {
   final TextEditingController textEditingController = TextEditingController();
-  void convert() {
-    setState(() {
-      result =
-          (double.parse(textEditingController.text) * 1535.17).roundToDouble();
-    });
-  }
 
   @override
   void initState() {
     super.initState();
+    fetchExchangeRate();
   }
 
+  double exchangeRate = 0.00;
   double result = 0.00;
+  Future<void> fetchExchangeRate() async {
+    final String apiKey = dotenv.env['API_KEY'] ?? '';
+    final url = Uri.parse(
+      'https://open.er-api.com/v6/latest/USD?apikey=$apiKey',
+    );
+
+    try {
+      final response = await get(url);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data.containsKey('rates') && data['rates'].containsKey('NGN')) {
+          setState(() {
+            exchangeRate = data['rates']['NGN'];
+          });
+        } else {
+          if (kDebugMode) {
+            print("Invalid API response format");
+          }
+        }
+      } else {
+        if (kDebugMode) {
+          print('Failed to fetch exchange rate: ${response.statusCode}');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+    }
+  }
+
+  Future<void> convert() async {
+    await fetchExchangeRate();
+    setState(() {
+      result =
+          (double.parse(textEditingController.text) *
+                  (exchangeRate > 0 ? exchangeRate : 1730))
+              .roundToDouble();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    print("rebuild");
     final border = OutlineInputBorder(
       borderSide: BorderSide(color: Colors.white, width: 2),
       borderRadius: BorderRadius.all(Radius.circular(40)),
@@ -81,7 +122,9 @@ class _CurrencyCoverterStatePageState extends State<CurrencyConverterPagee> {
               ),
             ),
             TextButton(
-              onPressed: convert,
+              onPressed: () {
+                convert();
+              },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blue,
