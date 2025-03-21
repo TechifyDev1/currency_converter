@@ -19,9 +19,10 @@ class _CurrencyConverterCupatinoPageState
   final TextEditingController textEditingController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
+  void dispose() {
+    textEditingController.dispose();
     fetchExchangeRate();
+    super.dispose();
   }
 
   double exchangeRate = 0.00;
